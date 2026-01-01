@@ -1,47 +1,55 @@
-# Executive GTM Signal Engine
+# LeonOS || Executive GTM Signal Engine
 
-**A lightweight operating system for revenue leaders.**
-Turning noise into decision-grade artifacts through clear visualization and automated judgment.
+**Status:** Live v1.0
+**Role:** Revenue Architect
+**Demo:** [Launch Command Center](https://basinleon.github.io)
 
-![Pipeline Preview](assets/pipeline-preview.png)
+---
 
-## The Problem
-Revenue leaders and GTM operators are often trapped in "reporting," not "deciding." CRMs act as data warehouses, not flow engines. The friction of updating a deal stage or finding a contact creates a cognitive tax that degrades decision quality.
+## ⚡ System Objective
+Standard CRMs (Salesforce/HubSpot) are data warehouses, not decision engines. They obscure signal with administrative noise.
 
-## The Solution
-This engine separates **Signal** (what matters) from **Noise** (raw data). It is designed with "Director-Grade" constraints:
-*   **Zero-Latency Interactions:** Native HTML5 Drag-and-Drop for pipeline physics.
-*   **Sovereign Data:** All intelligence resides locally or in controlled secure shards.
-*   **Execution First:** Tools that output artifacts (briefs, emails), not just dashboards.
+**The GTM Signal Engine** is a local-first operational tool designed to:
+1.  **Force Decision Velocity:** Drag-and-drop physics require active deal stage management.
+2.  **Eliminate Zombie Deals:** Visual aging creates immediate friction for stalled opportunities.
+3.  **Generate Portable Artifacts:** Browser-native PDF generation converts live pipeline state into board-ready briefs.
 
-## Core Capabilities (Live)
+## 🛠 Architecture & Stack
 
-### 1. Revenue Ops: Pipeline Physics
-A Kanban interface designed for **Flow State**.
-*   **Visual Velocity:** Immediate feedback on deal progression.
-*   **Frictionless Transitions:** Drag-and-drop mechanics to reduce the interaction cost of updating deal status.
-*   **Dopamine Visualization:** Positive reinforcement feedback loops upon closing revenue.
+### Core Components
+- **Frontend:** React (Functional Components + Hooks)
+- **Styling:** Tailwind CSS (Utility-first architecture)
+- **State Management:** LocalStorage (Zero-latency persistence)
+- **Artifact Engine:** Native `window.print` with CSS `@media print` typography enforcement.
 
-### 2. Network Intelligence (CRM)
-*   **Identity Shards:** Structured storage for high-value contact data.
-*   **LinkedIn Sentinel Protocol:** Automated protocols for identifying profile visitors and converting them to leads (simulated).
+### Feature Vectors
+| Vector | Status | Description |
+| :--- | :--- | :--- |
+| **A: Artifact Generator** | 🟢 **Shipped** | Zero-dependency PDF export for executive reviews. |
+| **B: Drag-and-Drop** | 🟢 **Shipped** | Kanban-style physics for "War Room" & "Fractional" pipelines. |
+| **C: Signal Scoring** | 🟡 *In Development* | Algorithmic weighting of deal probability vs. effort. |
 
-## Technical Philosophy
-This codebase prioritizes **Maintenance Economics** and **Conceptual Integrity**.
+## 📦 Local Deployment
 
-*   **Stack:** React + Vite + Tailwind 3.4
-*   **Constraint:** Native APIs preferred over heavy dependencies (e.g., HTML5 DnD vs. libraries).
-*   **Modularity:** The Engine is decoupled from the Command Center (Site) to allow independent scaling.
+This project is built to run locally for data privacy and speed.
 
-## References & Design Theory
-*   **Modularity:** Parnas, D. L. (1972). On the criteria to be used in decomposing systems into modules. *Communications of the ACM*, 15(12), 1053–1058.
-*   **Usability:** Norman, D. A. (2013). *The Design of Everyday Things* (Revised and expanded edition). Basic Books.
-
-## Installation & Deployment
 ```bash
+# 1. Clone the repository
+git clone https://github.com/BasinLeon/executive-gtm-signal-engine.git
+
+# 2. Install dependencies
 npm install
+
+# 3. Initialize the Command Center
 npm run dev
 ```
-## Status
-**Active Development.** v9.0 Sovereign Edition.
-*Current Focus:* Vector A (Artifact Generation).
+
+## 📜 Design Philosophy
+
+> "If a Director can't forward it, it's not an artifact."
+
+This system prioritizes **nouns and verbs** over adjectives. It is designed to reduce the "translation layer" between Revenue Operations and Executive Strategy.
+
+---
+
+*Built by Leon Basin. Architecture > Administration.*
