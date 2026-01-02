@@ -97,7 +97,38 @@ export const INITIAL_STATE: UserState = {
         { id: 'nc57', tier: '1', name: 'Angelo Giallombardo', company: 'Central Exec Search', role: 'President', status: 'NURTURE', lastTouch: '2025-12-18', strategy: 'Disqualified Sales Eng role. Pivoted to Director/VP search.' },
         { id: 'nc58', tier: '1', name: 'Gia Thomas', company: 'inbound', role: 'Recruiter', status: 'NURTURE', lastTouch: '2025-12-28', strategy: '' },
         { id: 'nc59', tier: '1', name: 'Ethan Harris', company: 'inbound', role: 'N/A', status: 'NURTURE', lastTouch: '2025-12-28', strategy: '' },
-        { id: 'nc60', tier: '1', name: 'Jonathan Goldberg', company: 'ManTech', role: 'Prospect/Champion', status: 'PASSIVE', lastTouch: '2025-12-28', strategy: 'EVIDENCE: The ManTech P0 Win. Save for Reference Check.' }
+        { id: 'nc60', tier: '1', name: 'Jonathan Goldberg', company: 'ManTech', role: 'Prospect/Champion', status: 'PASSIVE', lastTouch: '2025-12-28', strategy: 'EVIDENCE: The ManTech P0 Win. Save for Reference Check.' },
+        // WAR ROOM - ACTIVE HIRING MANAGERS & RECRUITERS (JAN 2026)
+        { id: 'wr1', tier: '1', name: 'Casey Taranella', company: 'Ambient.ai', role: 'Recruiting Ops Lead', status: 'ACTIVE', lastTouch: '2026-01-07', strategy: 'Jan 7 Meeting. External agency (Sloane Staffing).' },
+        { id: 'wr2', tier: '1', name: 'Smita Philip', company: 'QuantumScape', role: 'Sr. TA Consultant', status: 'ACTIVE', lastTouch: '2026-01-09', strategy: 'Internal TA. Handling your application.' },
+        { id: 'wr3', tier: '1', name: 'Lauren Benoit', company: 'Halter', role: 'Sr. TA Partner', status: 'ACTIVE', lastTouch: '2026-01-09', strategy: 'Internal TA. Managing Regional Sales Manager role.' },
+        { id: 'wr4', tier: '1', name: 'Paul-Christopher Campbell', company: 'LiveRamp', role: 'Lead PMM', status: 'ACTIVE', lastTouch: '2026-01-10', strategy: 'Active. Contact for Lead PMM role.' },
+        { id: 'wr5', tier: '1', name: 'Vivian Tang', company: 'Ant International', role: 'Director BD', status: 'ACTIVE', lastTouch: '2025-12-12', strategy: 'Hiring Manager. Resume is with her.' },
+        { id: 'wr6', tier: '1', name: 'Paulo', company: 'eBay', role: 'Sr Mgr Seller Success', status: 'ACTIVE', lastTouch: '2025-12-12', strategy: 'Hiring Manager. Texted & Emailed.' },
+        { id: 'wr7', tier: '1', name: 'Marianne Kvitko', company: 'LinkedIn', role: 'Recruiter', status: 'ACTIVE', lastTouch: '2025-12-12', strategy: 'Internal. Waiting for system email re: 4 Req IDs.' },
+        { id: 'wr8', tier: '1', name: 'Evgeniia Kosterina', company: 'Axiom', role: 'Founding Sales Exec', status: 'ACTIVE', lastTouch: '2025-12-12', strategy: 'Contact for Founding Sales role.' },
+        { id: 'wr9', tier: '1', name: 'Brian Andres', company: 'Kumo.ai', role: 'Founding Recruiter', status: 'ACTIVE', lastTouch: '2025-12-11', strategy: 'Founding Recruiter. Pitching Tech Sales angle.' },
+        { id: 'wr10', tier: '1', name: 'Aurelien Aubert', company: 'Cargo (YC S23)', role: 'Founding GTM Eng', status: 'REVIVED', lastTouch: '2025-12-15', strategy: 'Founding GTM role. Revived connection.' },
+        { id: 'wr11', tier: '1', name: 'Jacques Dondoua', company: 'Trust in Soda', role: 'Recruiter', status: 'ACTIVE', lastTouch: '2025-12-22', strategy: 'Gateway to Fintech GTM roles.' },
+        { id: 'wr12', tier: '1', name: 'Oliver Perry', company: 'Trust in Soda', role: 'Managing Director', status: 'ACTIVE', lastTouch: '2025-12-11', strategy: 'HOT Lead. Email sent with resume.' },
+        { id: 'wr13', tier: '1', name: 'Allison', company: 'Fastino AI', role: 'Recruiter', status: 'ACTIVE', lastTouch: '2025-12-19', strategy: 'Interview scheduled (Dec 19 - needs follow-up).' },
+        { id: 'wr14', tier: '1', name: 'Gautam Arya', company: 'Tredence', role: 'Growth Sales Leader', status: 'ACTIVE', lastTouch: '2025-12-19', strategy: 'Submitted rate ($150k) & strategic write-up.' },
+        { id: 'wr15', tier: '1', name: 'Jung-Hong Kim', company: 'Klipy', role: 'US GTM Leader', status: 'ACTIVE', lastTouch: '2025-12-24', strategy: 'Founder role. Pitching Forward Operating Base.' },
+        { id: 'wr16', tier: '1', name: 'Ido Goldberg', company: 'Swan AI', role: 'Founding GTM', status: 'ACTIVE', lastTouch: '2025-12-20', strategy: 'Pitching Fellow Builder narrative.' },
+        { id: 'wr17', tier: '1', name: 'Jaime Muirhead', company: 'Skypoint', role: 'Director GTM', status: 'ACTIVE', lastTouch: '2025-12-28', strategy: 'Pitched Zero Trust + Healthcare AI.' },
+        { id: 'wr18', tier: '1', name: 'Kaitlyn Finefrock', company: 'Brightedge', role: 'GTM Lead', status: 'ACTIVE', lastTouch: '2025-12-12', strategy: 'Src: Ryan Richardson.' },
+        { id: 'wr19', tier: '1', name: 'Michael Rosenberg', company: 'CRS Credit API', role: 'Enterprise AE', status: 'ACTIVE', lastTouch: '2025-12-12', strategy: 'Interview confirmed with Tyler.' },
+        { id: 'wr20', tier: '1', name: 'Sukhvir S.', company: 'Fastly', role: 'Senior/Director GTM', status: 'ACTIVE', lastTouch: '2025-12-19', strategy: 'Offered internal referral.' },
+        { id: 'wr21', tier: '1', name: 'Jamie Schorr', company: 'Cezanne Recruiting', role: 'Account Executive', status: 'REVIVED', lastTouch: '2025-12-22', strategy: 'High-OTE closing role. Revived.' },
+        // NETWORK - REFERRALS & CHAMPIONS
+        { id: 'net1', tier: '1', name: 'Marina Nekhendzy-Basin', company: 'QuantumScape', role: 'Referral Source', status: 'ACTIVE', lastTouch: '2026-01-01', strategy: 'Your internal champion for the PMM role.' },
+        { id: 'net2', tier: '2', name: 'Corinne McKeever', company: 'Considine Search', role: 'Staff Recruitment Dir.', status: 'WARM', lastTouch: '2025-12-17', strategy: 'Contact for Sr. BD Manager - Emerging Co.' },
+        { id: 'net3', tier: '2', name: 'Coellen Camat', company: 'Spherion', role: 'Recruiter', status: 'WARM', lastTouch: '2025-12-17', strategy: 'Contact for Regional Sales Manager.' },
+        { id: 'net4', tier: '2', name: 'Siena Brewster', company: 'PayPal', role: 'Recruiter', status: 'CLOSED', lastTouch: '2025-12-17', strategy: 'Contact for Customer Success Manager (Closed).' },
+        { id: 'net5', tier: '2', name: 'Sara Hunter', company: 'Gartner', role: 'GTM Strategy', status: 'WARM', lastTouch: '2025-12-12', strategy: 'Src: Ryan Richardson.' },
+        { id: 'net6', tier: '3', name: 'Kayleigh', company: 'Andromeda', role: 'Recruiter', status: 'STALLED', lastTouch: '2025-12-01', strategy: 'Ghosted. Deal stalled.' },
+        { id: 'net7', tier: '2', name: 'Arka', company: 'AWS', role: 'Contact', status: 'OUTREACH', lastTouch: '2025-12-28', strategy: 'Outreach sent.' },
+        { id: 'net8', tier: '2', name: 'Purva', company: 'Adobe', role: 'Contact', status: 'OUTREACH', lastTouch: '2025-12-28', strategy: 'Outreach sent.' }
     ],
     pipeline: [
         {
@@ -249,6 +280,62 @@ export const INITIAL_STATE: UserState = {
             stage: JobStage.APPLIED, probability: 10, salary: '$0', value: 0,
             intent: 'Low', triggers: [], lastEnriched: '2025-12-28', securityProtocol: 'Level 5',
             priority: 'P1', nextStep: 'N/A', dueDate: '2025-12-28', notes: 'N/A', contacts: ['c25']
+        },
+        // NEW P1 OPPORTUNITIES - JAN 2026
+        {
+            id: 'j26', company: 'Ambient.ai', role: 'Recruiting Ops Lead',
+            stage: JobStage.INTERVIEWING, probability: 60, salary: '$220k', value: 220000,
+            intent: 'High', triggers: [], lastEnriched: '2026-01-07', securityProtocol: 'Level 3',
+            priority: 'P1', nextStep: 'Prep for Jan 7 Meeting', dueDate: '2026-01-07', notes: 'External agency (Sloane Staffing).', contacts: ['wr1']
+        },
+        {
+            id: 'j27', company: 'QuantumScape', role: 'Sr. TA Consultant',
+            stage: JobStage.APPLIED, probability: 50, salary: '$250k', value: 250000,
+            intent: 'High', triggers: [], lastEnriched: '2026-01-09', securityProtocol: 'Level 4',
+            priority: 'P1', nextStep: 'Wait for TA Review', dueDate: '2026-01-09', notes: 'Internal TA. Handling your application.', contacts: ['wr2']
+        },
+        {
+            id: 'j28', company: 'Halter', role: 'Regional Sales Manager',
+            stage: JobStage.APPLIED, probability: 40, salary: '$180k', value: 180000,
+            intent: 'Medium', triggers: [], lastEnriched: '2026-01-09', securityProtocol: 'Level 3',
+            priority: 'P1', nextStep: 'Wait for TA Response', dueDate: '2026-01-09', notes: 'Internal TA. Managing the role.', contacts: ['wr3']
+        },
+        // FRACTIONAL CLIENTS - CASH FLOW PIPELINE
+        {
+            id: 'frac1', company: 'FYM Partners', role: 'Fractional GTM',
+            stage: JobStage.INTERVIEWING, probability: 70, salary: '$5k/mo', value: 60000,
+            intent: 'High', triggers: [], lastEnriched: '2026-01-01', securityProtocol: 'Level 2',
+            priority: 'P1', nextStep: 'Active Engagement', dueDate: '2026-01-15', notes: 'Fractional: $5k/mo - 70% Active', contacts: []
+        },
+        {
+            id: 'frac2', company: 'TechFlow', role: 'Fractional Advisor',
+            stage: JobStage.TARGET, probability: 50, salary: '$1.5k/mo', value: 18000,
+            intent: 'Medium', triggers: [], lastEnriched: '2026-01-01', securityProtocol: 'Level 2',
+            priority: 'P2', nextStep: 'Initial Call', dueDate: '2026-01-10', notes: 'Fractional: $1.5k/mo - 50% Initial Call', contacts: []
+        },
+        {
+            id: 'frac3', company: 'SolveJet', role: 'Fractional GTM',
+            stage: JobStage.APPLIED, probability: 40, salary: '$3k/mo', value: 36000,
+            intent: 'Medium', triggers: [], lastEnriched: '2026-01-01', securityProtocol: 'Level 2',
+            priority: 'P2', nextStep: 'Follow up on Proposal', dueDate: '2026-01-08', notes: 'Fractional: $3k/mo - 40% Proposal Sent', contacts: []
+        },
+        {
+            id: 'frac4', company: 'Nexus AI', role: 'Fractional Advisor',
+            stage: JobStage.TARGET, probability: 60, salary: '$2.5k/mo', value: 30000,
+            intent: 'High', triggers: [], lastEnriched: '2026-01-01', securityProtocol: 'Level 2',
+            priority: 'P2', nextStep: 'Send Proposal Draft', dueDate: '2026-01-10', notes: 'Fractional: $2.5k/mo - 60% Proposal Draft', contacts: []
+        },
+        {
+            id: 'frac5', company: 'Spray.io', role: 'Fractional GTM',
+            stage: JobStage.TARGET, probability: 30, salary: '$2k/mo', value: 24000,
+            intent: 'Low', triggers: [], lastEnriched: '2026-01-01', securityProtocol: 'Level 2',
+            priority: 'P3', nextStep: 'Scoping Call', dueDate: '2026-01-15', notes: 'Fractional: $2k/mo - 30% Scoping', contacts: []
+        },
+        {
+            id: 'frac6', company: 'AlphaCorp', role: 'Fractional Advisor',
+            stage: JobStage.TARGET, probability: 20, salary: '$4k/mo', value: 48000,
+            intent: 'Low', triggers: [], lastEnriched: '2026-01-01', securityProtocol: 'Level 2',
+            priority: 'P3', nextStep: 'Lead Qualification', dueDate: '2026-01-20', notes: 'Fractional: $4k/mo - 20% Lead', contacts: []
         }
     ],
     assets: [],
