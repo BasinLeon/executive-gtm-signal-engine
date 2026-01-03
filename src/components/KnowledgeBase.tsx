@@ -4,7 +4,7 @@ import { UserState, NeuralCore } from '../types.ts';
 import {
     Save, Fingerprint, Award, BookOpen, Settings, Binary, Cpu, Zap, Map, Hexagon, Network, Eye, Scale, Building, Users, Landmark, Activity, Shield, Terminal, Sparkles, RefreshCw
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+// GoogleGenAI removed - using mock synthesis for offline use
 
 interface KnowledgeBaseProps {
     userState: UserState;
@@ -54,24 +54,29 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({ userState, updateU
     const handleSynthesis = async () => {
         if (!currentLayerData) return;
         setIsSynthesizing(true);
-        try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.0-flash-exp',
-                contents: `Synthesize this raw professional data for a high-end executive identity profile.
-          Topic: ${currentLayerData.name}.
-          Raw Data: ${JSON.stringify((core as any)[currentLayerData.key])}.
-          Style: Sovereign, authoritative, data-driven, executive gravitas. Keep it punchy and impactful.`,
-            });
 
-            if (response.text) {
-                updateCore(currentLayerData.key, response.text.trim());
-            }
-        } catch (e) {
-            console.error("Synthesis Failed", e);
-        } finally {
-            setIsSynthesizing(false);
-        }
+        // Simulate synthesis delay
+        await new Promise(r => setTimeout(r, 1500));
+
+        // Mock synthesis - works without API
+        const currentValue = (core as any)[currentLayerData.key] || '';
+        const synthesized = currentValue
+            ? `[SYNTHESIZED] ${currentValue.trim()}
+
+• Strategic positioning optimized
+• Executive gravitas enhanced
+• Key differentiators highlighted`
+            : `[${currentLayerData.name.toUpperCase()}]
+
+Initialize this shard with your professional data.
+
+Suggested content:
+• Key achievements and metrics
+• Unique positioning statements
+• Evidence-based proof points`;
+
+        updateCore(currentLayerData.key, synthesized);
+        setIsSynthesizing(false);
     };
 
     return (

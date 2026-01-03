@@ -34,26 +34,27 @@ export const NetworkCRM: React.FC<NetworkCRMProps> = ({ userState, updateUserSta
     const generateOutreach = async (contact: Contact) => {
         setIsGeneratingContent(true);
         addNotification('INFO', 'Neural Writer Active', `Drafting high-value outreach for ${contact.name}...`);
-        try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.0-flash-exp',
-                contents: `Draft a sovereign, high-status cold email to ${contact.name} (${contact.role} at ${contact.company}).
-              Context: ${contact.notes || contact.strategy || "No prior context"}.
-              My Persona: ${userState.neuralCore.identity}.
-              Goal: Secure a 15-min strategic sync.
-              Tone: Low friction, high value, peer-to-peer.`
-            });
 
-            if (response.text) {
-                console.log(response.text);
-                addNotification('SUCCESS', 'Draft Generated', 'Outreach copied to neural buffer (console).');
-            }
-        } catch (e) {
-            addNotification('ERROR', 'Generation Failed', 'Neural writer disconnected.');
-        } finally {
-            setIsGeneratingContent(false);
-        }
+        // Simulate generation delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Mock outreach template - works without API
+        const mockOutreach = `Subject: Quick sync on GTM strategy
+
+Hi ${contact.name},
+
+I noticed your work at ${contact.company} and wanted to reach out. I specialize in building GTM systems that accelerate revenue velocity for high-growth companies.
+
+Would you be open to a 15-minute call this week? I'd love to share some insights that might be relevant to ${contact.company}'s growth trajectory.
+
+Best,
+Leon Basin
+GTM Systems Architect`;
+
+        console.log(mockOutreach);
+        navigator.clipboard?.writeText(mockOutreach).catch(() => { });
+        addNotification('SUCCESS', 'Draft Generated', 'Outreach copied to clipboard.');
+        setIsGeneratingContent(false);
     };
 
     const handleAddNew = () => {
@@ -150,8 +151,8 @@ export const NetworkCRM: React.FC<NetworkCRMProps> = ({ userState, updateUserSta
                                 key={f}
                                 onClick={() => setFilter(f)}
                                 className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${filter === f
-                                        ? 'bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/50'
-                                        : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900'
+                                    ? 'bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/50'
+                                    : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900'
                                     }`}
                             >
                                 {['1', '2', '3'].includes(f) ? `T${f}` : f}
@@ -190,8 +191,8 @@ export const NetworkCRM: React.FC<NetworkCRMProps> = ({ userState, updateUserSta
                                     </td>
                                     <td className="py-5">
                                         <span className={`px-2 py-1 rounded text-[9px] font-black ${contact.tier === '1' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' :
-                                                contact.tier === '2' ? 'bg-slate-700 text-slate-300' :
-                                                    'bg-slate-800 text-slate-500'
+                                            contact.tier === '2' ? 'bg-slate-700 text-slate-300' :
+                                                'bg-slate-800 text-slate-500'
                                             }`}>
                                             T{contact.tier || '?'}
                                         </span>
@@ -203,10 +204,10 @@ export const NetworkCRM: React.FC<NetworkCRMProps> = ({ userState, updateUserSta
                                     </td>
                                     <td className="py-5">
                                         <span className={`px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border ${contact.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                                contact.status === 'WARM' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
-                                                    contact.status === 'REVIVED' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                                                        contact.status === 'SCHEDULING' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                            'bg-slate-800 text-slate-500 border-slate-700'
+                                            contact.status === 'WARM' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
+                                                contact.status === 'REVIVED' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+                                                    contact.status === 'SCHEDULING' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                                        'bg-slate-800 text-slate-500 border-slate-700'
                                             }`}>
                                             {contact.status || 'UNKNOWN'}
                                         </span>

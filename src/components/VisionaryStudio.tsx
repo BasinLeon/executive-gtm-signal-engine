@@ -5,7 +5,7 @@ import { UserState, GeneratedAsset } from '../types.ts';
 import {
     Zap, MonitorPlay, Layers, Sparkles, RefreshCw, Aperture, Check
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+// GoogleGenAI removed - using mock generators for offline use
 
 interface VisionaryStudioProps {
     userState: UserState;
@@ -26,34 +26,12 @@ export const VisionaryStudio: React.FC<VisionaryStudioProps> = ({ userState, upd
         if (!prompt.trim()) return;
         setIsGenerating(true); setStatus("Initializing Neural Forge...");
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-            // NOTE: Veo Video generation is a very hypothetical/preview API. 
-            // Assuming 'generateVideos' or similar will exist or we mock it for the demo if not publicly available yet.
-            // For now, we will simulate the waiting period and return a placeholder if actual API fails or is not available.
-
             // Simulate real delay
             await new Promise(r => setTimeout(r, 2000));
             setStatus("Rendering Neural Frames...");
             await new Promise(r => setTimeout(r, 2000));
 
-            const mockUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"; // Placeholder
-
-            // In a real implementation:
-            /*
-            let operation = await ai.models.generateVideos({
-              model: 'veo-3.1-fast-generate-preview',
-              prompt: prompt,
-              config: { numberOfVideos: 1, resolution: '720p', aspectRatio: '16:9' }
-            });
-            while (!operation.done) {
-              await new Promise(r => setTimeout(r, 4000));
-              operation = await ai.operations.getVideosOperation({operation: operation});
-               setStatus("Rendering Neural Frames...");
-            }
-            if (operation.response?.generatedVideos?.[0]?.video?.uri) {
-                 mockUrl = operation.response.generatedVideos[0].video.uri;
-            }
-            */
+            const mockUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"; // Demo video
 
             setCurrentVideoUrl(mockUrl);
 
@@ -80,15 +58,48 @@ export const VisionaryStudio: React.FC<VisionaryStudioProps> = ({ userState, upd
         if (!prompt.trim()) return;
         setIsGenerating(true); setStatus("Synthesizing Executive Script...");
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.0-flash-exp',
-                contents: `Write a punchy, high-impact script for an executive video update.
-                Context: ${userState.neuralCore.identity}
-                Topic: ${prompt}
-                Format: Teleprompter script. Short, spoken-word sentences. Mark pauses with [PAUSE].`
-            });
-            setGeneratedScript(response.text || "Script generation failed.");
+            // Simulate API delay
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Mock script generator - works without API
+            const mockScript = `[LOOK AT CAMERA]
+
+Hey everyone, 
+
+[PAUSE]
+
+Today I want to talk about ${prompt}.
+
+[PAUSE]
+
+As someone focused on GTM strategy and revenue operations, 
+I've seen firsthand how the right systems can transform pipeline velocity.
+
+[PAUSE]
+
+The key insight? 
+It's not about working harder. 
+It's about building systems that compound.
+
+[PAUSE]
+
+Let me break down the three pillars...
+
+[CONTINUE]
+
+First, signal detection.
+Second, pipeline orchestration. 
+And third, continuous adaptation.
+
+[PAUSE]
+
+If you want to learn more, drop a comment below.
+
+[SMILE, PAUSE]
+
+Thanks for watching.`;
+
+            setGeneratedScript(mockScript);
             setMode('NARRATIVE_CORE');
             setStatus("Script Ready.");
         } catch (e) {

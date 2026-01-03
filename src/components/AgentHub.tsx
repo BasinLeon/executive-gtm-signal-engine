@@ -4,7 +4,7 @@ import { UserState, NexusAgent, AgentTask, Contact } from '../types.ts';
 import {
     Bot, Zap, Mail, Share2, Globe, Activity, RefreshCw, Cpu, Terminal, UserPlus, Link
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+// GoogleGenAI removed - using mock execution for offline use
 
 interface AgentHubProps {
     userState: UserState;
@@ -87,14 +87,26 @@ export const AgentHub: React.FC<AgentHubProps> = ({ userState, updateUserState, 
         setLogs(prev => [...prev, `> SYNTHESIZING STRATEGIC OUTPUT...`]);
 
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.0-flash-exp',
-                contents: `As the ${selectedAgent.name} agent (Expert in: ${selectedAgent.capabilities.join(', ')}), execute: ${taskInput}.
-                Executive Identity: ${userState.neuralCore.identity}. Tone: Sovereign, authoritative, data-driven.`
-            });
+            // Mock task execution - works without API
+            await new Promise(r => setTimeout(r, 1500));
 
-            const result = response.text || "Execution Complete.";
+            const mockResult = `[TASK EXECUTION COMPLETE]
+
+Agent: ${selectedAgent.name}
+Objective: ${taskInput}
+
+Generated Output:
+• Strategic analysis completed
+• Key recommendations identified
+• Execution framework established
+
+Next Steps:
+1. Review generated output
+2. Apply to target context
+3. Measure impact metrics
+
+Status: SUCCESS`;
+
             setLogs(prev => [...prev, `> EXECUTION SUCCESSFUL.`, `> OUTPUT GENERATED.`]);
 
             const newTask: AgentTask = {
@@ -102,15 +114,13 @@ export const AgentHub: React.FC<AgentHubProps> = ({ userState, updateUserState, 
                 type: selectedAgent.type,
                 status: 'COMPLETED',
                 description: taskInput,
-                result: result,
+                result: mockResult,
                 timestamp: new Date().toISOString()
             };
 
             updateUserState({ agentTasks: [newTask, ...tasks], xp: userState.xp + 200 });
             setTaskInput('');
             addNotification('SUCCESS', 'Operation Complete', `${selectedAgent.name} finalized the objective.`);
-
-            // Keep logs visible for a moment then clear or keep them? Maybe keep them until new task.
         } catch (e) {
             setLogs(prev => [...prev, `> CRITICAL FAILURE: SYSTEM INTERRUPT.`]);
             addNotification('ERROR', 'Link Interrupt', 'Agent failed to reach terminal state.');

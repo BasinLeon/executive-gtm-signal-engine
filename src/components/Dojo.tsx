@@ -5,7 +5,7 @@ import { INTERVIEW_STAGES } from '../constants.ts';
 import {
     Play, Square, Medal, Target
 } from 'lucide-react';
-import { GoogleGenAI, LiveServerMessage, Modality } from '@google/genai';
+// GoogleGenAI removed - using mock interview mode for offline use
 import { generateDossier } from '../services/geminiService.ts';
 
 interface DojoProps {
@@ -51,82 +51,54 @@ export const Dojo: React.FC<DojoProps> = ({ userState, initialConfig, updateUser
     useEffect(() => { transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [transcript]);
 
     const startSession = async () => {
-        const key = process.env.API_KEY || (window as any).process?.env?.API_KEY;
-        console.log("Using API Key:", key ? "FOUND" : "MISSING");
-        if (!key) { alert("Please set REACT_APP_GEMINI_API_KEY or process.env.API_KEY"); return; }
-
         setIsActive(true); setAiState('CONNECTING'); setDossier(null); setTranscript([]);
 
         try {
+            // Try to get camera for visual feedback
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
             if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.play(); }
 
-            const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
-            if (!audioContextRef.current) audioContextRef.current = new AudioContextClass({ sampleRate: 16000 });
-            if (!outputAudioContextRef.current) outputAudioContextRef.current = new AudioContextClass({ sampleRate: 24000 });
+            // Mock interview mode - works without API
+            setAiState('LISTENING');
 
-            const ai = new GoogleGenAI({ apiKey: key });
-            const sessionPromise = ai.live.connect({
-                model: 'gemini-2.0-flash-exp',
-                callbacks: {
-                    onopen: () => { setAiState('LISTENING'); },
-                    onmessage: (message: LiveServerMessage) => {
-                        const inputTx = message.serverContent?.inputTranscription?.text;
-                        if (inputTx) setTranscript(p => [...p, { source: 'YOU', text: inputTx, timestamp: new Date().toLocaleTimeString() }]);
+            // Simulate AI greeting after short delay
+            setTimeout(() => {
+                setTranscript(p => [...p, {
+                    source: 'AI',
+                    text: `Welcome to the ${sessionConfig.mode} interview session. I'll be evaluating you for ${sessionConfig.targetRole || 'this position'}${sessionConfig.targetCompany ? ` at ${sessionConfig.targetCompany}` : ''}. Tell me about a time when you achieved significant results in a GTM role.`,
+                    timestamp: new Date().toLocaleTimeString()
+                }]);
+                setAiState('SPEAKING');
+            }, 2000);
 
-                        if (message.serverContent?.interrupted) {
-                            interruptionCountRef.current += 1;
-                            scheduledSourcesRef.current.forEach(s => { try { s.stop(); } catch (e) { } });
-                            scheduledSourcesRef.current = [];
-                            nextAudioStartTimeRef.current = outputAudioContextRef.current?.currentTime || 0;
-                        }
+            // Simulate follow-up questions
+            setTimeout(() => {
+                setAiState('LISTENING');
+                setTranscript(p => [...p, {
+                    source: 'AI',
+                    text: `Interesting. How did you measure success in that situation?`,
+                    timestamp: new Date().toLocaleTimeString()
+                }]);
+            }, 15000);
 
-                        audioProcessingChain.current = audioProcessingChain.current.then(async () => {
-                            const currentInterruptionId = interruptionCountRef.current;
-                            const audioData = message.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
-                            if (audioData && outputAudioContextRef.current && currentInterruptionId === interruptionCountRef.current) {
-                                const binaryString = atob(audioData);
-                                const bytes = new Uint8Array(binaryString.length);
-                                for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
-                                const dataInt16 = new Int16Array(bytes.buffer);
-                                const buffer = outputAudioContextRef.current.createBuffer(1, dataInt16.length, 24000);
-                                buffer.getChannelData(0).set(Array.from(dataInt16).map(v => v / 32768.0));
+            setTimeout(() => {
+                setTranscript(p => [...p, {
+                    source: 'AI',
+                    text: `Can you walk me through your decision-making process when facing a strategic challenge?`,
+                    timestamp: new Date().toLocaleTimeString()
+                }]);
+            }, 30000);
 
-                                const src = outputAudioContextRef.current.createBufferSource();
-                                src.buffer = buffer; src.connect(outputAudioContextRef.current.destination);
-                                const now = outputAudioContextRef.current.currentTime;
-                                if (nextAudioStartTimeRef.current < now) nextAudioStartTimeRef.current = now + 0.05;
-                                src.start(nextAudioStartTimeRef.current);
-                                nextAudioStartTimeRef.current += buffer.duration;
-                                setAiState('SPEAKING'); scheduledSourcesRef.current.push(src);
-                            }
-                            const outTx = message.serverContent?.outputTranscription?.text;
-                            if (outTx) setTranscript(p => [...p, { source: 'AI', text: outTx, timestamp: new Date().toLocaleTimeString() }]);
-                        });
-                    }
-                },
-                config: {
-                    responseModalities: [Modality.AUDIO],
-                    systemInstruction: `You are an elite sovereign interviewer. Mode: ${sessionConfig.mode}. Role: ${sessionConfig.targetRole} at ${sessionConfig.targetCompany}.`,
-                    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE_MAP[sessionConfig.mode] || 'Aoede' } } },
-                }
-            });
-            liveSessionRef.current = await sessionPromise;
-
-            const source = audioContextRef.current.createMediaStreamSource(stream);
-            const processor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
-            source.connect(processor); processor.connect(audioContextRef.current.destination);
-            processor.onaudioprocess = (e) => {
-                if (!liveSessionRef.current || isMuted) return;
-                const data = e.inputBuffer.getChannelData(0);
-                const int16 = new Int16Array(data.length);
-                for (let i = 0; i < data.length; i++) int16[i] = data[i] * 32768;
-                const uint8 = new Uint8Array(int16.buffer);
-                let binary = '';
-                for (let i = 0; i < uint8.byteLength; i++) binary += String.fromCharCode(uint8[i]);
-                liveSessionRef.current.sendRealtimeInput({ media: { mimeType: 'audio/pcm;rate=16000', data: btoa(binary) } });
-            };
-        } catch (err) { console.error(err); setIsActive(false); }
+        } catch (err) {
+            console.error(err);
+            // Still allow session without camera
+            setAiState('LISTENING');
+            setTranscript([{
+                source: 'AI',
+                text: `[Demo Mode] Camera unavailable. This is a simulated interview. In production, you would have a live AI conversation here.`,
+                timestamp: new Date().toLocaleTimeString()
+            }]);
+        }
     };
 
     const stopSession = async () => {
