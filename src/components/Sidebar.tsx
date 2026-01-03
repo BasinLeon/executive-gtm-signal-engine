@@ -41,6 +41,7 @@ const navCategories = [
             { view: AppView.NETWORK, icon: <Users size={18} />, label: 'Identity CRM', sublabel: 'Network Graph' },
             { view: AppView.PIPELINE, icon: <Briefcase size={18} />, label: 'Revenue Pipeline', sublabel: 'Deal Flow' },
             { view: AppView.AGENTS, icon: <Bot size={18} />, label: 'Nexus Agents', sublabel: 'AI Workforce', badge: 'PRO' },
+            { view: AppView.PROFILE, icon: <Target size={18} />, label: 'Profile', sublabel: 'Achievements', badge: 'NEW' },
         ]
     }
 ];
@@ -97,8 +98,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
                 onClick={() => setView(view)}
                 className={`flex items-center w-full p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${isActive
-                        ? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-white'
-                        : 'text-slate-500 hover:text-slate-200 hover:bg-slate-900/50'
+                    ? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-white'
+                    : 'text-slate-500 hover:text-slate-200 hover:bg-slate-900/50'
                     }`}
             >
                 {isActive && <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#D4AF37] shadow-[0_0_15px_#D4AF37]" />}
@@ -113,8 +114,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 {badge && (
                     <span className={`text-[7px] font-black uppercase px-1.5 py-0.5 rounded ${badge === 'LIVE' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                            badge === 'PRO' ? 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30' :
-                                'bg-slate-800 text-slate-500'
+                        badge === 'PRO' ? 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30' :
+                            'bg-slate-800 text-slate-500'
                         }`}>
                         {badge}
                     </span>

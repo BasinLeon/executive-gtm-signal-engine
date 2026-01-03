@@ -11,6 +11,9 @@ import { VisionaryStudio } from './components/VisionaryStudio.tsx';
 import SignalBrief from './components/SignalBrief.tsx';
 import { SettingsPanel } from './components/SettingsPanel.tsx';
 import { CommandPalette } from './components/CommandPalette.tsx';
+import { ProfilePage } from './components/ProfilePage.tsx';
+import { QuickActionsHub } from './components/QuickActionsHub.tsx';
+import { ExecutiveReport } from './components/ExecutiveReport.tsx';
 
 import { AppView, UserState, JobDeal, Contact } from './types.ts';
 import { INITIAL_STATE } from './constants.ts';
@@ -152,6 +155,7 @@ const App: React.FC = () => {
                     userState={userState}
                     updateUserState={update}
                     initialConfig={{}}
+                    addNotification={addNotification}
                 />}
 
                 {view === AppView.NETWORK && <NetworkCRM
@@ -182,7 +186,20 @@ const App: React.FC = () => {
                     userState={userState}
                     updateUserState={update}
                 />}
+
+                {view === AppView.PROFILE && <ProfilePage
+                    userState={userState}
+                    addNotification={addNotification}
+                />}
             </main>
+
+            {/* Quick Actions Hub */}
+            <QuickActionsHub
+                setView={setView}
+                onOpenSearch={() => setCommandPaletteOpen(true)}
+                onOpenSettings={() => setSettingsOpen(true)}
+                addNotification={addNotification}
+            />
 
             {/* Settings Panel */}
             <SettingsPanel

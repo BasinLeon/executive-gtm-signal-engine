@@ -1,4 +1,5 @@
 
+
 export enum AppView {
     DASHBOARD = 'DASHBOARD',
     DOJO = 'DOJO',
@@ -7,7 +8,8 @@ export enum AppView {
     KNOWLEDGE = 'KNOWLEDGE',
     AGENTS = 'AGENTS',
     MEDIA_OPS = 'MEDIA_OPS',
-    VAULT = 'VAULT'
+    VAULT = 'VAULT',
+    PROFILE = 'PROFILE'
 }
 
 export enum JobStage {
