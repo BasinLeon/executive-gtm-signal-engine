@@ -2,16 +2,17 @@
 import React, { useState } from 'react';
 import { UserState, NeuralCore } from '../types.ts';
 import {
-    Save, Fingerprint, Award, BookOpen, Settings, Binary, Cpu, Zap, Map, Hexagon, Network, Eye, Scale, Building, Users, Landmark, Activity, Shield, Terminal, Sparkles, RefreshCw
+    Save, Fingerprint, Award, BookOpen, Settings, Binary, Cpu, Zap, Map, Hexagon, Network, Eye, Scale, Building, Users, Landmark, Activity, Shield, Terminal, Sparkles, RefreshCw, CheckCircle
 } from 'lucide-react';
-// GoogleGenAI removed - using mock synthesis for offline use
+import { RichTextEditor } from './RichTextEditor.tsx';
 
 interface KnowledgeBaseProps {
     userState: UserState;
     updateUserState: (newState: Partial<UserState>) => void;
+    addNotification?: (type: 'SUCCESS' | 'ERROR' | 'INFO' | 'WARNING', msg: string, sub?: string) => void;
 }
 
-export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({ userState, updateUserState }) => {
+export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({ userState, updateUserState, addNotification }) => {
     const [activeLayer, setActiveLayer] = useState<number>(0);
     const [isSynthesizing, setIsSynthesizing] = useState(false);
     const core = userState.neuralCore;
@@ -55,10 +56,8 @@ export const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({ userState, updateU
         if (!currentLayerData) return;
         setIsSynthesizing(true);
 
-        // Simulate synthesis delay
         await new Promise(r => setTimeout(r, 1500));
 
-        // Mock synthesis - works without API
         const currentValue = (core as any)[currentLayerData.key] || '';
         const synthesized = currentValue
             ? `[SYNTHESIZED] ${currentValue.trim()}
@@ -77,98 +76,127 @@ Suggested content:
 
         updateCore(currentLayerData.key, synthesized);
         setIsSynthesizing(false);
+        addNotification?.('SUCCESS', 'Shard Synthesized', `${currentLayerData.name} enhanced with neural optimization.`);
     };
+
+    // Calculate completion percentage
+    const filledLayers = allLayers.filter(l => {
+        const val = (core as any)[l.key];
+        return val && (Array.isArray(val) ? val.length > 0 : val.toString().trim().length > 0);
+    }).length;
+    const completionPercent = Math.round((filledLayers / allLayers.length) * 100);
 
     return (
         <div className="p-8 h-full flex flex-col lg:flex-row gap-8 bg-[#020617] relative overflow-hidden animate-in fade-in duration-700">
-            <div className="w-full lg:w-[440px] flex flex-col gap-6 z-10">
+            <div className="w-full lg:w-[380px] flex flex-col gap-4 z-10">
+                {/* Header with progress */}
                 <div className="mb-2">
-                    <h2 className="text-5xl font-black text-white leading-none tracking-tighter uppercase">
+                    <h2 className="text-4xl font-black text-white leading-none tracking-tighter uppercase">
                         Identity <span className="text-[#D4AF37]">Engine</span>
                     </h2>
+                    <div className="mt-4 flex items-center gap-3">
+                        <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-[#D4AF37] to-yellow-500 transition-all duration-500"
+                                style={{ width: `${completionPercent}%` }}
+                            />
+                        </div>
+                        <span className="text-[10px] font-mono text-[#D4AF37] font-bold">{completionPercent}%</span>
+                    </div>
+                    <p className="text-[10px] text-slate-600 font-mono mt-2">{filledLayers}/{allLayers.length} shards initialized</p>
                 </div>
 
-                <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar space-y-6">
-                    <div className="space-y-3">
-                        <h4 className="text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.4em] mb-4 flex items-center gap-3">
-                            <Zap size={14} className="fill-[#D4AF37]" /> Execution Shards (L0-L10)
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
+                    {/* Alpha Layers */}
+                    <div className="space-y-2">
+                        <h4 className="text-[9px] text-[#D4AF37] font-black uppercase tracking-[0.3em] flex items-center gap-2 sticky top-0 bg-[#020617] py-2">
+                            <Zap size={12} className="fill-[#D4AF37]" /> Execution Shards (L0-L10)
                         </h4>
-                        <div className="grid grid-cols-1 gap-2">
-                            {alphaLayers.map(layer => (
+                        {alphaLayers.map(layer => {
+                            const hasContent = (core as any)[layer.key]?.toString().trim().length > 0;
+                            return (
                                 <button
                                     key={layer.id}
                                     onClick={() => setActiveLayer(layer.id)}
-                                    className={`p-4 rounded-xl border transition-all flex items-center gap-4 text-left group ${activeLayer === layer.id ? 'bg-[#D4AF37]/10 border-[#D4AF37]/50 shadow-[0_0_20px_rgba(212,175,55,0.1)]' : 'bg-slate-900/30 border-slate-800/50 hover:border-slate-600'}`}
+                                    className={`w-full p-3 rounded-xl border transition-all flex items-center gap-3 text-left group ${activeLayer === layer.id
+                                            ? 'bg-[#D4AF37]/10 border-[#D4AF37]/50'
+                                            : 'bg-slate-900/30 border-slate-800/50 hover:border-slate-600'
+                                        }`}
                                 >
-                                    <div className={`p-2 rounded-lg transition-colors ${activeLayer === layer.id ? 'bg-[#D4AF37] text-black' : 'bg-slate-800 text-slate-500'}`}>
+                                    <div className={`p-2 rounded-lg transition-colors ${activeLayer === layer.id ? 'bg-[#D4AF37] text-black' : 'bg-slate-800 text-slate-500'
+                                        }`}>
                                         {layer.icon}
                                     </div>
-                                    <div className="flex-1">
-                                        <div className={`text-[10px] font-black uppercase font-mono tracking-widest ${activeLayer === layer.id ? 'text-white' : 'text-slate-500'}`}>{layer.name}</div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className={`text-[10px] font-black uppercase font-mono tracking-wider truncate ${activeLayer === layer.id ? 'text-white' : 'text-slate-500'
+                                            }`}>{layer.name}</div>
                                     </div>
+                                    {hasContent && (
+                                        <CheckCircle size={14} className="text-emerald-500 flex-shrink-0" />
+                                    )}
                                 </button>
-                            ))}
-                        </div>
+                            );
+                        })}
                     </div>
 
-                    <div className="space-y-3">
-                        <h4 className="text-[10px] text-blue-400 font-black uppercase tracking-[0.4em] mb-4 flex items-center gap-3">
-                            <Network size={14} className="fill-blue-400" /> Strategic Peaks (L11-L21)
+                    {/* Omega Layers */}
+                    <div className="space-y-2">
+                        <h4 className="text-[9px] text-blue-400 font-black uppercase tracking-[0.3em] flex items-center gap-2 sticky top-0 bg-[#020617] py-2">
+                            <Network size={12} /> Strategic Peaks (L11-L21)
                         </h4>
-                        <div className="grid grid-cols-1 gap-2">
-                            {omegaLayers.map(layer => (
+                        {omegaLayers.map(layer => {
+                            const hasContent = (core as any)[layer.key]?.toString().trim().length > 0;
+                            return (
                                 <button
                                     key={layer.id}
                                     onClick={() => setActiveLayer(layer.id)}
-                                    className={`p-4 rounded-xl border transition-all flex items-center gap-4 text-left group ${activeLayer === layer.id ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.1)]' : 'bg-slate-900/30 border-slate-800/50 hover:border-slate-600'}`}
+                                    className={`w-full p-3 rounded-xl border transition-all flex items-center gap-3 text-left group ${activeLayer === layer.id
+                                            ? 'bg-blue-500/10 border-blue-500/50'
+                                            : 'bg-slate-900/30 border-slate-800/50 hover:border-slate-600'
+                                        }`}
                                 >
-                                    <div className={`p-2 rounded-lg transition-colors ${activeLayer === layer.id ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-500'}`}>
+                                    <div className={`p-2 rounded-lg transition-colors ${activeLayer === layer.id ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-500'
+                                        }`}>
                                         {layer.icon}
                                     </div>
-                                    <div className="flex-1">
-                                        <div className={`text-[10px] font-black uppercase font-mono tracking-widest ${activeLayer === layer.id ? 'text-white' : 'text-slate-500'}`}>{layer.name}</div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className={`text-[10px] font-black uppercase font-mono tracking-wider truncate ${activeLayer === layer.id ? 'text-white' : 'text-slate-500'
+                                            }`}>{layer.name}</div>
                                     </div>
+                                    {hasContent && (
+                                        <CheckCircle size={14} className="text-emerald-500 flex-shrink-0" />
+                                    )}
                                 </button>
-                            ))}
-                        </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
 
-            <div className="flex-1 glass-panel rounded-[3rem] border border-slate-800 flex flex-col relative z-10 overflow-hidden shadow-2xl bg-black/40">
-                <div className="p-12 border-b border-slate-800/50 bg-slate-900/20 flex justify-between items-center backdrop-blur-xl">
-                    <div className="flex items-center gap-6">
-                        <div className={`p-8 rounded-[2rem] ${activeLayer < 11 ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-blue-500/20 text-blue-400'} border border-white/5 shadow-2xl transition-all`}>
-                            {currentLayerData ? React.cloneElement(currentLayerData.icon as React.ReactElement<any>, { size: 42, strokeWidth: 2.5 }) : <Binary size={42} />}
+            {/* Editor Panel */}
+            <div className="flex-1 glass-panel rounded-[2rem] border border-slate-800 flex flex-col relative z-10 overflow-hidden shadow-2xl bg-black/40">
+                {/* Header */}
+                <div className="p-6 border-b border-slate-800/50 bg-slate-900/20 flex justify-between items-center backdrop-blur-xl">
+                    <div className="flex items-center gap-4">
+                        <div className={`p-4 rounded-xl ${activeLayer < 11 ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-blue-500/20 text-blue-400'} border border-white/5`}>
+                            {currentLayerData ? React.cloneElement(currentLayerData.icon as React.ReactElement<any>, { size: 24 }) : <Binary size={24} />}
                         </div>
                         <div>
-                            <h3 className="text-5xl font-black text-white leading-none tracking-tighter uppercase">{currentLayerData?.name}</h3>
-                            <p className="text-slate-500 text-sm font-mono mt-2 uppercase tracking-[0.3em] font-black italic">{currentLayerData?.desc} // Shard_{activeLayer}</p>
+                            <h3 className="text-2xl font-black text-white leading-none tracking-tighter uppercase">{currentLayerData?.name}</h3>
+                            <p className="text-slate-500 text-[10px] font-mono mt-1 uppercase tracking-widest">{currentLayerData?.desc} // Shard_{activeLayer}</p>
                         </div>
                     </div>
-                    <button
-                        onClick={handleSynthesis}
-                        disabled={isSynthesizing}
-                        className={`flex items-center gap-3 px-8 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${isSynthesizing ? 'bg-slate-900 text-slate-600' : 'bg-[#D4AF37] hover:bg-yellow-500 text-black shadow-xl'}`}
-                    >
-                        {isSynthesizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
-                        {isSynthesizing ? 'Synthesizing...' : 'Neural Synthesis'}
-                    </button>
                 </div>
 
-                <div className="flex-1 p-12 overflow-y-auto custom-scrollbar bg-black/20 relative">
-                    <div className="absolute inset-0 pointer-events-none opacity-5 geometric-grid"></div>
-                    <div className="max-w-5xl mx-auto h-full relative z-10">
-                        <div className="flex items-center gap-2 mb-6 text-[10px] text-slate-600 font-mono uppercase tracking-widest font-black">
-                            <Terminal size={12} /> Input Buffer (L22 Sovereignty)
-                        </div>
-                        <textarea
-                            className="w-full h-[calc(100%-40px)] bg-transparent text-slate-300 font-mono text-xl leading-relaxed focus:outline-none resize-none placeholder:text-slate-900 selection:bg-[#D4AF37]/30"
-                            value={currentLayerData ? (core as any)[currentLayerData.key] : ''}
-                            onChange={e => currentLayerData && updateCore(currentLayerData.key, e.target.value)}
-                            placeholder={`INITIALIZE ${currentLayerData?.name?.toUpperCase()} SHARD...`}
-                        />
-                    </div>
+                {/* Rich Text Editor */}
+                <div className="flex-1 overflow-hidden">
+                    <RichTextEditor
+                        value={currentLayerData ? ((core as any)[currentLayerData.key]?.toString() || '') : ''}
+                        onChange={value => currentLayerData && updateCore(currentLayerData.key, value)}
+                        placeholder={`Initialize ${currentLayerData?.name?.toUpperCase()} shard with your professional data...`}
+                        onSynthesize={handleSynthesis}
+                        isSynthesizing={isSynthesizing}
+                    />
                 </div>
             </div>
         </div>

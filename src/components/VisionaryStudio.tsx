@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { UserState, GeneratedAsset } from '../types.ts';
 
 import {
-    Zap, MonitorPlay, Layers, Sparkles, RefreshCw, Aperture, Check
+    Zap, MonitorPlay, Layers, Sparkles, RefreshCw, Aperture, Check, FileText, Video, Briefcase, Rocket, MessageSquare, Award, Presentation
 } from 'lucide-react';
 // GoogleGenAI removed - using mock generators for offline use
 
@@ -14,6 +14,84 @@ interface VisionaryStudioProps {
 
 type StudioMode = 'ASSET_FORGE' | 'SIMULACRUM' | 'NARRATIVE_CORE';
 
+interface Template {
+    id: string;
+    name: string;
+    icon: React.ReactNode;
+    category: 'VIDEO' | 'SCRIPT';
+    prompt: string;
+    description: string;
+}
+
+const TEMPLATES: Template[] = [
+    // Video Templates
+    {
+        id: 'v-boardroom',
+        name: 'Executive Boardroom',
+        icon: <Briefcase size={14} />,
+        category: 'VIDEO',
+        prompt: 'A cinematic shot of a high-tech boardroom, volumetric lighting, data visualizations floating in the air, 8k, professional, modern architecture, glass walls, city skyline view.',
+        description: 'Premium corporate setting'
+    },
+    {
+        id: 'v-presentation',
+        name: 'Product Launch',
+        icon: <Rocket size={14} />,
+        category: 'VIDEO',
+        prompt: 'A dynamic product launch scene, sleek modern stage, dramatic lighting, holographic displays, futuristic aesthetic, keynote speaker silhouette, 8k cinematic.',
+        description: 'Keynote-style reveal'
+    },
+    {
+        id: 'v-office',
+        name: 'Startup Office',
+        icon: <MonitorPlay size={14} />,
+        category: 'VIDEO',
+        prompt: 'A vibrant startup office space, open floor plan, creative team collaborating, natural light, exposed brick, plants, modern furniture, 8k professional photography style.',
+        description: 'Collaborative workspace'
+    },
+    {
+        id: 'v-abstract',
+        name: 'Data Visualization',
+        icon: <Layers size={14} />,
+        category: 'VIDEO',
+        prompt: 'Abstract 3D data visualization, flowing neon particles forming graphs and charts, dark background, cinematic depth of field, futuristic dashboard aesthetic, 8k render.',
+        description: 'Abstract data motion'
+    },
+    // Script Templates
+    {
+        id: 's-intro',
+        name: 'Self Introduction',
+        icon: <MessageSquare size={14} />,
+        category: 'SCRIPT',
+        prompt: 'A compelling 60-second self-introduction for a GTM leadership role, highlighting key achievements and unique value proposition.',
+        description: 'Quick intro pitch'
+    },
+    {
+        id: 's-achievements',
+        name: 'Achievement Story',
+        icon: <Award size={14} />,
+        category: 'SCRIPT',
+        prompt: 'A STAR-format story about driving 300% revenue growth through strategic GTM transformation at a Series B startup.',
+        description: 'STAR method narrative'
+    },
+    {
+        id: 's-vision',
+        name: 'Vision Statement',
+        icon: <Sparkles size={14} />,
+        category: 'SCRIPT',
+        prompt: 'A 90-second vision statement for modern revenue operations, emphasizing AI-powered systems and data-driven decision making.',
+        description: 'Strategic vision'
+    },
+    {
+        id: 's-pitch',
+        name: 'Value Pitch',
+        icon: <Presentation size={14} />,
+        category: 'SCRIPT',
+        prompt: 'A compelling 2-minute pitch on why I am the ideal candidate for VP of GTM, focusing on unique skills and proven track record.',
+        description: 'Interview closer'
+    },
+];
+
 export const VisionaryStudio: React.FC<VisionaryStudioProps> = ({ userState, updateUserState }) => {
     const [mode, setMode] = useState<StudioMode>('ASSET_FORGE');
     const [prompt, setPrompt] = useState("A cinematic shot of a high-tech boardroom, volumetric lighting, data visualizations in the air, 8k, professional.");
@@ -21,6 +99,7 @@ export const VisionaryStudio: React.FC<VisionaryStudioProps> = ({ userState, upd
     const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null);
     const [status, setStatus] = useState("");
     const [exportStatus, setExportStatus] = useState<'IDLE' | 'EXPORTED'>('IDLE');
+    const [showTemplates, setShowTemplates] = useState(false);
 
     const generateVideo = async () => {
         if (!prompt.trim()) return;
@@ -126,7 +205,45 @@ Thanks for watching.`;
             <div className="flex-1 flex flex-col lg:flex-row gap-8 overflow-hidden">
                 <div className="w-full lg:w-[480px] flex flex-col gap-6">
                     <div className="glass-panel p-10 rounded-[3rem] border border-slate-800 flex flex-col">
-                        <div className="text-[10px] text-cyan-500 font-black uppercase tracking-[0.4em] mb-6 flex items-center gap-3"><Sparkles size={16} /> Asset Director</div>
+                        <div className="text-[10px] text-cyan-500 font-black uppercase tracking-[0.4em] mb-4 flex items-center justify-between">
+                            <span className="flex items-center gap-2"><Sparkles size={14} /> Asset Director</span>
+                            <button
+                                onClick={() => setShowTemplates(!showTemplates)}
+                                className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${showTemplates ? 'bg-cyan-500 text-black' : 'bg-slate-800 text-slate-500 hover:text-cyan-500'}`}
+                            >
+                                Templates
+                            </button>
+                        </div>
+
+                        {/* Templates Panel */}
+                        {showTemplates && (
+                            <div className="mb-4 p-4 bg-slate-900/80 rounded-2xl border border-slate-700">
+                                <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-3">
+                                    {mode === 'ASSET_FORGE' ? 'Video Prompts' : 'Script Templates'}
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {TEMPLATES
+                                        .filter(t => mode === 'ASSET_FORGE' ? t.category === 'VIDEO' : t.category === 'SCRIPT')
+                                        .map(template => (
+                                            <button
+                                                key={template.id}
+                                                onClick={() => {
+                                                    setPrompt(template.prompt);
+                                                    setShowTemplates(false);
+                                                }}
+                                                className="p-3 bg-slate-800/50 border border-slate-700 rounded-xl hover:border-cyan-500 hover:bg-cyan-500/10 transition-all text-left group"
+                                            >
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-cyan-500">{template.icon}</span>
+                                                    <span className="text-[10px] font-bold text-white group-hover:text-cyan-400 transition-colors">{template.name}</span>
+                                                </div>
+                                                <p className="text-[9px] text-slate-500 truncate">{template.description}</p>
+                                            </button>
+                                        ))}
+                                </div>
+                            </div>
+                        )}
+
                         <textarea
                             className="w-full h-48 bg-black/40 border border-slate-800 rounded-3xl p-6 text-sm font-mono text-slate-300 focus:border-cyan-500 focus:outline-none transition-all placeholder:text-slate-800 leading-relaxed resize-none"
                             value={prompt}
