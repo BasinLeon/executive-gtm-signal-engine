@@ -101,6 +101,199 @@ body {
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
 }
 
+/* ===== MOBILE RESPONSIVENESS ===== */
+
+/* Mobile-first adjustments */
+@media (max-width: 1024px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Sidebar mobile */
+    .sidebar-mobile-hidden {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-mobile-visible {
+        transform: translateX(0);
+    }
+
+    /* Typography scaling */
+    h1,
+    h2 {
+        font-size: clamp(1.5rem, 5vw, 3rem);
+    }
+
+    /* Glass panel mobile adjustments */
+    .glass-panel {
+        border-radius: 1rem;
+        padding: 1rem;
+    }
+
+    /* Card grids */
+    .mobile-stack {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Touch-friendly buttons */
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Compact navigation */
+    nav button {
+        padding: 0.75rem;
+    }
+
+    /* Responsive font sizes */
+    .text-9xl {
+        font-size: clamp(2.5rem, 10vw, 6rem);
+    }
+
+    /* Hide decorative elements on mobile */
+    .hide-on-mobile {
+        display: none;
+    }
+
+    /* Full-width cards */
+    .glass-panel {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Scrollable tables */
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Extra compact mode */
+    .p-8 {
+        padding: 1rem;
+    }
+
+    .p-6 {
+        padding: 0.75rem;
+    }
+
+    .gap-8 {
+        gap: 1rem;
+    }
+
+    .gap-6 {
+        gap: 0.75rem;
+    }
+
+    /* Stack everything vertically */
+    .flex-row {
+        flex-direction: column;
+    }
+
+    /* Hide secondary text */
+    .text-4xl,
+    .text-5xl,
+    .text-6xl {
+        font-size: 1.75rem;
+    }
+
+    /* Compact stat cards */
+    .stat-card {
+        padding: 0.75rem;
+    }
+}
+
+/* Mobile menu overlay */
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Premium glow effects */
+.gold-glow {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.cyan-glow {
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+}
+
+/* Floating action button (mobile) */
+.fab {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Smooth transitions */
+* {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Prevent layout shift */
+.aspect-video {
+    aspect-ratio: 16 / 9;
+}
+
+.aspect-square {
+    aspect-ratio: 1 / 1;
+}
+
+/* Loading skeletons */
+.skeleton {
+    background: linear-gradient(90deg, rgba(30, 41, 59, 0.3) 25%, rgba(51, 65, 85, 0.3) 50%, rgba(30, 41, 59, 0.3) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Improved focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+}
+
 /* SOVEREIGN PRINT ENGINE // VECTOR A */
 @media print {
 
