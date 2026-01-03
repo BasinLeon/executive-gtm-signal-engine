@@ -1,6 +1,5 @@
-
 import React, { useState, useMemo } from 'react';
-import { LayoutDashboard, Swords, Users, Briefcase, Database, ChevronRight, Aperture, Search, Download, Save, ShieldCheck, Hexagon, Bot } from 'lucide-react';
+import { LayoutDashboard, Swords, Users, Briefcase, Database, ChevronRight, Aperture, Search, Download, Save, ShieldCheck, Hexagon, Bot, Settings } from 'lucide-react';
 import { AppView, UserState } from '../types.ts';
 
 interface SidebarProps {
@@ -10,9 +9,10 @@ interface SidebarProps {
     onQuantumSelect: (result: { id: string; type: 'CONTACT' | 'DEAL' | 'ASSET' | 'PAGE'; view: AppView }) => void;
     onExportData: () => void;
     onImportData: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onOpenSettings?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, userState, onQuantumSelect, onExportData, onImportData }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, userState, onQuantumSelect, onExportData, onImportData, onOpenSettings }) => {
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -143,6 +143,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, userStat
                         <span className="flex items-center gap-2 group-hover:text-[#D4AF37] transition-colors"><Save size={12} /> System Link</span>
                         <ChevronRight size={12} className={`transform transition-transform ${showSettings ? 'rotate-90' : ''}`} />
                     </button>
+
+                    {onOpenSettings && (
+                        <button onClick={onOpenSettings} className="flex w-full items-center gap-2 rounded-xl border border-[#D4AF37]/20 bg-[#D4AF37]/5 p-3 text-[9px] font-black uppercase tracking-widest text-[#D4AF37]/70 transition-all hover:bg-[#D4AF37]/20 hover:text-[#D4AF37]">
+                            <Settings size={12} /> SYSTEM_SETTINGS
+                        </button>
+                    )}
 
                     <div className="flex items-center gap-3 px-1 py-1 bg-emerald-950/20 rounded border border-emerald-500/10">
                         <div className="relative flex h-2 w-2">

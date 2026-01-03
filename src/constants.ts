@@ -346,7 +346,7 @@ export const INITIAL_STATE: UserState = {
         { id: 'a3', name: 'Web Architect', type: 'WEB', status: 'IDLE', lastAction: 'None', capabilities: ['Content Sync', 'Landing Page Optimization', 'SEO Tuning'] },
         // NEW AGENTS FOR JAN 2026 GOAL
         { id: 'a4', name: 'Interview Defender', type: 'INTERVIEW', status: 'ACTIVE', lastAction: 'None', capabilities: ['Mock Scenarios', 'STAR Method Drill', 'Technical Q&A'] },
-        { id: 'a4', name: 'Negotiation Sentinel', type: 'NEGOTIATION', status: 'IDLE', lastAction: 'None', capabilities: ['Offer Analysis', 'Equity Modeling', 'Counter-Scripting'] },
+        { id: 'a6', name: 'Negotiation Sentinel', type: 'NEGOTIATION', status: 'IDLE', lastAction: 'None', capabilities: ['Offer Analysis', 'Equity Modeling', 'Counter-Scripting'] },
         { id: 'a5', name: 'LinkedIn Sentinel', type: 'LINKEDIN', status: 'ACTIVE', lastAction: 'Monitoring Visitors', capabilities: ['Profile Visitor Scan', 'Connection Degree Check', 'Auto-DM Dispatch', 'CRM Sync'] }
     ],
     agentTasks: [],

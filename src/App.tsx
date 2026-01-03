@@ -9,6 +9,8 @@ import { KnowledgeBase } from './components/KnowledgeBase.tsx';
 import { AgentHub } from './components/AgentHub.tsx';
 import { VisionaryStudio } from './components/VisionaryStudio.tsx';
 import SignalBrief from './components/SignalBrief.tsx';
+import { SettingsPanel } from './components/SettingsPanel.tsx';
+import { CommandPalette } from './components/CommandPalette.tsx';
 
 import { AppView, UserState, JobDeal, Contact } from './types.ts';
 import { INITIAL_STATE } from './constants.ts';
@@ -22,10 +24,25 @@ const App: React.FC = () => {
     });
     const [notifications, setNotifications] = useState<{ id: number, type: 'SUCCESS' | 'ERROR' | 'INFO' | 'WARNING', title: string, sub?: string }[]>([]);
     const [focusedItemId, setFocusedItemId] = useState<string | undefined>();
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
+    // Save state to localStorage
     useEffect(() => {
         localStorage.setItem('nexus_state_v9_sovereign_5', JSON.stringify(userState));
     }, [userState]);
+
+    // Global Cmd+K listener
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                setCommandPaletteOpen(true);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     const addNotification = (type: 'SUCCESS' | 'ERROR' | 'INFO' | 'WARNING', title: string, sub?: string) => {
         const id = Date.now();
@@ -44,6 +61,17 @@ const App: React.FC = () => {
         const reader = new FileReader();
         reader.onload = async (evt) => {
             const content = evt.target?.result as string;
+            try {
+                // Try parsing as full backup first
+                const parsed = JSON.parse(content);
+                if (parsed.contacts && parsed.pipeline) {
+                    setUserState(parsed as UserState);
+                    addNotification('SUCCESS', 'Full Backup Restored', `Loaded ${parsed.contacts.length} contacts and ${parsed.pipeline.length} deals.`);
+                    return;
+                }
+            } catch {
+                // Fall back to AI parsing for CSV/text
+            }
             const data = await parseBulkImportData(content);
             setUserState(prev => ({
                 ...prev,
@@ -62,6 +90,13 @@ const App: React.FC = () => {
         a.href = url;
         a.download = `nexus_core_backup_${new Date().toISOString()}.json`;
         a.click();
+        addNotification('SUCCESS', 'Backup Created', 'Full state exported to JSON file.');
+    };
+
+    const handleReset = () => {
+        localStorage.removeItem('nexus_state_v9_sovereign_5');
+        setUserState(INITIAL_STATE);
+        addNotification('INFO', 'System Reset', 'All data restored to default state.');
     };
 
     // Check if we're on the /brief route for PDF generation
@@ -78,9 +113,11 @@ const App: React.FC = () => {
                 onQuantumSelect={handleQuantumSelect}
                 onExportData={handleExport}
                 onImportData={handleImport}
+                onOpenSettings={() => setSettingsOpen(true)}
             />
 
             <main className="flex-1 relative overflow-hidden">
+                {/* Notifications */}
                 <div className="absolute top-0 right-0 p-8 flex flex-col gap-4 z-50 pointer-events-none">
                     {notifications.map(n => (
                         <div key={n.id} className={`pointer-events-auto p-4 rounded-xl border backdrop-blur-md shadow-2xl min-w-[300px] animate-in slide-in-from-right fade-in duration-300 ${n.type === 'SUCCESS' ? 'bg-emerald-900/40 border-emerald-500/50' : n.type === 'ERROR' ? 'bg-red-900/40 border-red-500/50' : 'bg-slate-900/80 border-[#D4AF37]/40'}`}>
@@ -89,6 +126,17 @@ const App: React.FC = () => {
                             {n.sub && <div className="text-xs text-slate-400 font-mono mt-1">{n.sub}</div>}
                         </div>
                     ))}
+                </div>
+
+                {/* Cmd+K Hint */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40">
+                    <button
+                        onClick={() => setCommandPaletteOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-full text-xs text-slate-400 transition-all backdrop-blur-sm hover:scale-105"
+                    >
+                        <span>Search...</span>
+                        <kbd className="px-1.5 py-0.5 bg-slate-900 rounded text-slate-500 border border-slate-600">⌘K</kbd>
+                    </button>
                 </div>
 
                 {view === AppView.DASHBOARD && <Dashboard
@@ -135,6 +183,26 @@ const App: React.FC = () => {
                     updateUserState={update}
                 />}
             </main>
+
+            {/* Settings Panel */}
+            <SettingsPanel
+                isOpen={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                onResetData={handleReset}
+                onExportData={handleExport}
+                onImportData={handleImport}
+            />
+
+            {/* Command Palette */}
+            <CommandPalette
+                isOpen={commandPaletteOpen}
+                onClose={() => setCommandPaletteOpen(false)}
+                contacts={userState.contacts}
+                pipeline={userState.pipeline}
+                onNavigate={setView}
+                onSelectContact={(id) => setFocusedItemId(id)}
+                onSelectDeal={(id) => setFocusedItemId(id)}
+            />
         </div>
     );
 
