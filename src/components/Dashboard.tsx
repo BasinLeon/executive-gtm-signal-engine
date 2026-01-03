@@ -6,6 +6,8 @@ import {
     TrendingUp, Compass, Award, Globe, Users, Zap, AlertCircle, Bot, Target, Edit2, Plus, ArrowUpRight, Activity, Radar as RadarIcon, Briefcase, ChevronRight, Sparkles, LayoutGrid, Timer, RefreshCw
 } from 'lucide-react';
 import { getHiringVelocity, fetchMarketSignals, getQuantumDiagnostics } from '../services/geminiService.ts';
+import { ActivityFeed, ActivityItem } from './ActivityFeed.tsx';
+import { GamificationPanel } from './GamificationPanel.tsx';
 
 interface DashboardProps {
     userState: UserState;
@@ -47,6 +49,57 @@ export const Dashboard: React.FC<DashboardProps> = ({ userState, setView, onPrep
         setIsEditingTarget(false);
         addNotification('SUCCESS', 'Target Recalibrated', `Annual GTM target set to $${(tempTarget / 1000000).toFixed(1)}M`);
     };
+
+    // Generate activity items from state
+    const activityItems: ActivityItem[] = useMemo(() => {
+        const items: ActivityItem[] = [];
+
+        // Add recent agent tasks
+        (userState.agentTasks || []).slice(0, 5).forEach(task => {
+            items.push({
+                id: task.id,
+                type: 'AGENT_TASK',
+                title: `Agent task completed`,
+                description: task.description,
+                timestamp: new Date(task.timestamp),
+                xpEarned: 200
+            });
+        });
+
+        // Add recent deals based on stage
+        (userState.pipeline || []).filter(d => d.stage === JobStage.CLOSED).slice(0, 3).forEach(deal => {
+            items.push({
+                id: `deal-${deal.id}`,
+                type: 'DEAL_CLOSED',
+                title: `${deal.company} deal closed`,
+                description: deal.role,
+                timestamp: new Date(deal.lastEnriched || Date.now()),
+                xpEarned: 500
+            });
+        });
+
+        // Simulate some recent activities
+        items.push({
+            id: 'login-today',
+            type: 'XP_EARNED',
+            title: 'Daily login bonus',
+            description: 'Keep the streak going!',
+            timestamp: new Date(),
+            xpEarned: 25
+        });
+
+        // Sort by timestamp
+        return items.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    }, [userState.agentTasks, userState.pipeline]);
+
+    // Gamification stats
+    const gamificationStats = useMemo(() => ({
+        xp: userState.xp || 0,
+        streak: userState.streak || 3, // Mock streak
+        sessionsCompleted: (userState.agentTasks || []).length,
+        dealsWon: (userState.pipeline || []).filter(d => d.stage === JobStage.CLOSED).length,
+        contactsAdded: (userState.contacts || []).length,
+    }), [userState]);
 
     const gapToGoal = Math.max(0, tempTarget - stats.weightedValue);
 
@@ -102,75 +155,92 @@ export const Dashboard: React.FC<DashboardProps> = ({ userState, setView, onPrep
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto lg:h-[65vh]">
-                {/* Market Intelligence Feed */}
-                <div className="col-span-1 lg:col-span-4 glass-panel p-10 rounded-[3.5rem] border border-slate-800 h-[500px] lg:h-full flex flex-col relative group overflow-hidden">
-                    <div className="absolute top-0 right-0 p-8 opacity-5 text-[#00E5FF] group-hover:rotate-12 transition-transform duration-1000"><Globe size={180} /></div>
-                    <div className="flex justify-between items-center mb-10 relative z-10">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-[#00E5FF]/20 rounded-xl">
-                                <Activity size={20} className="text-[#00E5FF] animate-pulse" />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* LEFT COLUMN: Market Intelligence + Activity Feed */}
+                <div className="col-span-1 lg:col-span-4 space-y-6">
+                    {/* Market Intelligence Feed */}
+                    <div className="glass-panel p-8 rounded-[2.5rem] border border-slate-800 relative group overflow-hidden">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 text-[#00E5FF] group-hover:rotate-12 transition-transform duration-1000"><Globe size={120} /></div>
+                        <div className="flex justify-between items-center mb-6 relative z-10">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-[#00E5FF]/20 rounded-xl">
+                                    <Activity size={16} className="text-[#00E5FF] animate-pulse" />
+                                </div>
+                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Market Pulse</h3>
                             </div>
-                            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.5em]">Market Pulse</h3>
+                        </div>
+                        <div className="space-y-3 max-h-[250px] overflow-y-auto custom-scrollbar relative z-10 pr-2">
+                            {marketSignals.slice(0, 4).map(sig => (
+                                <div key={sig.id} className="p-4 bg-slate-950/50 border border-slate-800 hover:border-[#00E5FF]/50 rounded-xl group/sig transition-all cursor-pointer relative overflow-hidden">
+                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00E5FF] opacity-50 group-hover/sig:opacity-100 transition-opacity"></div>
+                                    <div className="flex justify-between items-start mb-1">
+                                        <span className="text-[8px] font-mono text-[#00E5FF] uppercase font-black tracking-widest bg-[#00E5FF]/10 px-2 py-0.5 rounded">{sig.company}</span>
+                                        <span className="text-[8px] text-slate-600 font-mono">{sig.date}</span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-300 font-bold leading-relaxed group-hover/sig:text-white transition-colors">{sig.headline}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 relative z-10 pr-2">
-                        {marketSignals.map(sig => (
-                            <div key={sig.id} className="p-6 bg-slate-950/50 border border-slate-800 hover:border-[#00E5FF]/50 rounded-2xl group/sig transition-all cursor-pointer relative overflow-hidden">
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00E5FF] opacity-50 group-hover/sig:opacity-100 transition-opacity"></div>
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className="text-[9px] font-mono text-[#00E5FF] uppercase font-black tracking-widest bg-[#00E5FF]/10 px-2 py-1 rounded">{sig.company}</span>
-                                    <span className="text-[9px] text-slate-600 font-mono">{sig.date}</span>
-                                </div>
-                                <p className="text-xs text-slate-300 font-bold leading-relaxed tracking-tight group-hover/sig:text-white transition-colors">{sig.headline}</p>
-                            </div>
-                        ))}
+
+                    {/* Activity Feed */}
+                    <div className="glass-panel p-6 rounded-[2rem] border border-slate-800">
+                        <ActivityFeed activities={activityItems} maxItems={6} />
                     </div>
                 </div>
 
-                {/* Revenue Corridor Graph */}
-                <div className="col-span-1 lg:col-span-8 glass-panel p-10 rounded-[3.5rem] border border-slate-800 h-[500px] lg:h-full flex flex-col relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-transparent to-[#D4AF37]/5 pointer-events-none"></div>
-                    <div className="flex justify-between items-center mb-10 relative z-10">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-[#D4AF37]/20 rounded-xl">
-                                <TrendingUp size={20} className="text-[#D4AF37]" />
+                {/* CENTER: Revenue Graph + Gamification */}
+                <div className="col-span-1 lg:col-span-5 space-y-6">
+                    {/* Revenue Corridor Graph */}
+                    <div className="glass-panel p-8 rounded-[2.5rem] border border-slate-800 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-[#D4AF37]/5 pointer-events-none"></div>
+                        <div className="flex justify-between items-center mb-6 relative z-10">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-[#D4AF37]/20 rounded-xl">
+                                    <TrendingUp size={16} className="text-[#D4AF37]" />
+                                </div>
+                                <div>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Revenue Corridor</h3>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.5em]">Corridor Distribution</h3>
-                                <p className="text-[9px] text-slate-600 font-mono uppercase tracking-widest mt-1">Weighted Pipeline Valuation</p>
+                            <div className="text-right">
+                                <div className="text-2xl font-black text-white tracking-tighter">
+                                    {gapToGoal >= 1000000
+                                        ? `$${(gapToGoal / 1000000).toFixed(1)}M`
+                                        : `$${(gapToGoal / 1000).toFixed(0)}K`}
+                                </div>
+                                <div className="text-[8px] text-[#D4AF37] font-mono uppercase tracking-widest">Gap to Goal</div>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <div className="text-4xl font-black text-white tracking-tighter">
-                                {gapToGoal >= 1000000
-                                    ? `$${(gapToGoal / 1000000).toFixed(1)}M`
-                                    : `$${(gapToGoal / 1000).toFixed(0)}K`}
-                            </div>
-                            <div className="text-[9px] text-[#D4AF37] font-mono uppercase tracking-widest mt-1">Gap to Goal</div>
+                        <div className="w-full relative z-10 h-[200px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={stats.distribution} layout="vertical" margin={{ left: 0, right: 20, top: 5, bottom: 5 }}>
+                                    <XAxis type="number" hide />
+                                    <YAxis dataKey="name" type="category" width={80} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 800, fontFamily: '"JetBrains Mono", monospace' }} axisLine={false} tickLine={false} />
+                                    <Tooltip
+                                        cursor={{ fill: '#ffffff', opacity: 0.05 }}
+                                        contentStyle={{ backgroundColor: '#020617', borderColor: '#1e293b', borderRadius: '12px', color: '#fff', padding: '8px 14px' }}
+                                        itemStyle={{ fontSize: '11px', fontWeight: 'bold', fontFamily: 'monospace' }}
+                                        formatter={(value: number) => [
+                                            value >= 1000000 ? `$${(value / 1000000).toFixed(1)}M` : `$${(value / 1000).toFixed(0)}K`,
+                                            'Value'
+                                        ]}
+                                    />
+                                    <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={28} animationDuration={1500}>
+                                        {stats.distribution.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : index === 1 ? '#00E5FF' : index === 2 ? '#6366f1' : '#334155'} />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
                         </div>
                     </div>
-                    <div className="flex-1 w-full relative z-10 min-h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={stats.distribution} layout="vertical" margin={{ left: 0, right: 30, top: 10, bottom: 10 }}>
-                                <XAxis type="number" hide />
-                                <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 11, fill: '#64748b', fontWeight: 800, fontFamily: '"JetBrains Mono", monospace', letterSpacing: '0.05em' }} axisLine={false} tickLine={false} />
-                                <Tooltip
-                                    cursor={{ fill: '#ffffff', opacity: 0.05 }}
-                                    contentStyle={{ backgroundColor: '#020617', borderColor: '#1e293b', borderRadius: '16px', color: '#fff', padding: '12px 20px', boxShadow: '0 10px 40px -10px rgba(0,0,0,0.5)' }}
-                                    itemStyle={{ fontSize: '12px', fontWeight: 'bold', fontFamily: 'monospace' }}
-                                    formatter={(value: number) => [
-                                        value >= 1000000 ? `$${(value / 1000000).toFixed(1)}M` : `$${(value / 1000).toFixed(0)}K`,
-                                        'Value'
-                                    ]}
-                                />
-                                <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={40} animationDuration={1500}>
-                                    {stats.distribution.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : index === 1 ? '#00E5FF' : index === 2 ? '#6366f1' : '#334155'} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                </div>
+
+                {/* RIGHT COLUMN: Gamification Panel */}
+                <div className="col-span-1 lg:col-span-3">
+                    <div className="glass-panel p-6 rounded-[2rem] border border-slate-800 h-full">
+                        <GamificationPanel {...gamificationStats} />
                     </div>
                 </div>
             </div>
